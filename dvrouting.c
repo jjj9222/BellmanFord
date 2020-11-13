@@ -34,6 +34,7 @@ void bellmanford(struct Graph *g, int source, char* populate, FILE* file, char* 
 	int test = g->V * 8 * g->E;
 	
 	int totalV = g->V;
+	int directV = 0;
 	
 	int totalE = g->E;
 
@@ -42,10 +43,10 @@ void bellmanford(struct Graph *g, int source, char* populate, FILE* file, char* 
 	char format1[test];
 	char formattemp[test];
 	char temp[5];
-	char line[g->V];
-	
+	int line[totalV];
+	//printf("%s\n", populate);
 	for(int t = 0; t < (g->V)-1; t++){
-		line[t] = '-';	
+		line[t] = 1414;	
 	}
 	
 	for (i=1; i < totalV; i++){
@@ -53,41 +54,46 @@ void bellmanford(struct Graph *g, int source, char* populate, FILE* file, char* 
 		p[i] = 0;
 	}
 	int local = 0;
+	fprintf(file, "\t\t");
 	for(int e = 0; e < test; e++){
 		memset(temp, 0, 5);
 		local = 0;
 		if('*' == populate[e]){
 			e = test;	
 		}
-		
 		else if(';' == populate[e]){
 			tempVar = e+1;
 			while((47 < populate[tempVar]) && (58 > populate[tempVar])){
 				//found index number
-				printf("Found index number after ;\n");
+				//printf("Found index number after ;\n");
 				temp[local] = populate[tempVar];
 				tempVar += 1;
 				local += 1;
 			}
 			index = atoi(temp);
+			directV += 1;
+			fprintf(file, "\t%c", letters[index-1]);
+			
 		}
 		else if(',' == populate[e]){
 			tempVar = e+1;
 			while((47 < populate[tempVar]) && (58 > populate[tempVar])){
 				//found index number
-				printf("Found index number after ,\n");
+				//printf("Found index number after ,\n");
 				temp[local] = populate[tempVar];
 				tempVar += 1;
 				local += 1;
 			}
 			num = atoi(temp);
-			printf("Putting num into the distance array\n");
+			//printf("Putting num into the distance array\n");
 			d[index] = num;
 		}
 		
 	}
-	
+	fprintf(file, "\n");
+	//set the orgin to zero
 	d[0] = 0;
+	//printf("%d\n", totalE);
 	memset(format1, 0, test);
 	for(i = 1; i <= totalV-1; i++){
 		for(j = 0; j < totalE; j++){
@@ -97,101 +103,134 @@ void bellmanford(struct Graph *g, int source, char* populate, FILE* file, char* 
 			w = g->edge[j].weight;
 			
 			//formatting array below
-			format1[forvar] = 's';
-			forvar += 1;
-			strcpy(formattemp, format1);
-			snprintf(format1, test, "%s%d",formattemp, u);
-			if(u > 9){
+			if(1 == i){
+				format1[forvar] = 's';
+				forvar += 1;
+				strcpy(formattemp, format1);
+				snprintf(format1, test, "%s%d",formattemp, u);
+				if(u > 9){
+					forvar += 1;
+				}
+				forvar += 1;
+				format1[forvar] = 'd';
+				forvar += 1;
+				strcpy(formattemp, format1);
+				snprintf(format1, test, "%s%d",formattemp, v);
+				if(v > 9){
+					forvar += 1;
+				}
+				forvar += 1;
+				format1[forvar] = 'c';
+				forvar += 1;
+				strcpy(formattemp, format1);
+				snprintf(format1, test, "%s%d",formattemp, w);
+				if(w > 9){
+					forvar += 1;	
+				}
+				if(w > 99){
+					forvar += 1;	
+				}
+				forvar += 1;
+				format1[forvar] = 'x';
 				forvar += 1;
 			}
-			forvar += 1;
-			format1[forvar] = 'd';
-			forvar += 1;
-			strcpy(formattemp, format1);
-			snprintf(format1, test, "%s%d",formattemp, v);
-			if(v > 9){
-				forvar += 1;	
-			}
-			forvar += 1;
-			format1[forvar] = 'c';
-			forvar += 1;
-			strcpy(formattemp, format1);
-			snprintf(format1, test, "%s%d",formattemp, w);
-			if(w > 9){
-				forvar += 1;	
-			}
-			if(w > 99){
-				forvar += 1;	
-			}
-			forvar += 1;
-			format1[forvar] = 'x';
-			forvar += 1;
 			if (d[v] > d[u] + w){
 				d[v] = d[u] + w;
+				printf("%d\n", u);
 				p[v] = u;
 			}
 			
 		}
 	}
-	printf("%s\n", format1);
+	//printf("%s\n", format1);
 	//need to travel through the format array to print the correct values line by line
-	for( int row = 1; row < totalV; row++){
+	for(int row = 1; row < totalV; row++){
 		memset(temp, 0, 5);
 		local = 0;
 		int holder = 0, holder2 = 0;
 		//find all of the values for each row
+		int Avalue = 0;
+		memset(line, 0, sizeof(line));
 		for(int val = 0; val < test; val++){
 			if(0 == format1[val]){
 				val = test;	
 			}
 			if('d' == format1[val]){
-				printf("Found a d: %c\n", format1[val]); 
 				holder = val;
 				holder2 = val;
 				holder2 += 1;
+				memset(temp, 0, 5);
+				local = 0;
 				while((47 < format1[holder2]) && (58 > format1[holder2])){
 					temp[local] = format1[holder2];
 					local += 1;
 					holder2 += 1;
 				}
 				//printf("%d compare to %d\n", atoi(temp), row);
-				if(atoi(temp) == row){
+				if(atoi(temp) == row || atoi(temp) == 0){
 					//on that row ready to put into a line array
 					//need to get the index to line
-					memset(temp,0,5);
+					int isA = atoi(temp);
+					memset(temp,0,5);	
 					local = 0;
 					holder2 += 1;
 					while((47 < format1[holder2]) && (58 > format1[holder2])){
 						temp[local] = format1[holder2];
+						local += 1;
 						holder2 += 1;
 					}
 					int weight = atoi(temp);
-					printf("%d\n", weight);
+					//printf("%d\n", weight);
 					memset(temp,0,5);
 					local = 0;
 					holder -= 1;
 					while((47 < format1[holder]) && (58 > format1[holder])){
-						holder -= 1;	
+						holder -= 1;
 					}
 					holder += 1;
 					while((47 < format1[holder]) && (58 > format1[holder])){
 						temp[local] = format1[holder];
 						holder += 1;	
 					}
-					printf("%d\n", line[atoi(temp)]);
-					line[atoi(temp)] = weight;
+					if(0 == isA){
+						Avalue = weight;	
+					}
+					if(0 == isA && row == atoi(temp)){
+						line[row] = weight;	
+					}
+					else if(0 != isA){
+						line[atoi(temp)] = Avalue + weight;
+						//printf("%d\n", line[atoi(temp)]);
+					}
+					//printf("%d ", line[atoi(temp)]);
 				}
-				
+				//printf("\n");
 				//printf("%c\n", format1[val+1]);
 			}
 			
 		}
-		printf("%d\n", totalV);
-		printf("%s\n", line);
+		fprintf(file, "\t\t%c\t", letters[row-1]);
+		for( int l = 1; l <= directV; l++){
+			if(0 == line[l]){
+				fprintf(file, "--\t");	
+			}
+			else{
+				fprintf(file, "%d\t", line[l]);
+			}
+		}
+		fprintf(file, "\n");
+		
+	}
+	fprintf(file,"\n\tRouting Table: \n\t\tRouting Table for A:\n\t\t--------------------\n\t\tDest\tNxtHp\n");
+	for(int route = 1; route < totalV-1; route++){
+		if(0 == p[route]){
+			fprintf(file, "\t\t%c\t\t%c\n", letters[route-1], letters[route-1]); 
+		}
+		else{
+			fprintf(file, "\t\t%c\t\t%c\n", letters[route-1], letters[p[route]-1]);
+		}
 	}
 	
-	
-	//printf("%d\n", format1[0]);
 	fprintf(file, "Messages Sent:\n");
 	for(int value = 0; value < totalV-1; value++){
 		fprintf(file, "{A,%c,%d};", letters[value], d[value+1]);
@@ -350,10 +389,17 @@ int main(int argc, char** argv){
 					fprintf(write, "\t\t%c\t\t%c\n", letters[i], letters[i]);	
 				}
 			}
+			fprintf(file, "Messages Sent:\n");
+			int = tempvariable = 0;
+			for(int w = 0; w < totalV-1; w++){
+				fprintf(file, "{A,%c,%d};", letters[value], distance[value+1]);
+			}
+	}
+	fprintf(file, "\n");
 		}
 		//done printing first table
-		//else{
-		else if (time == 1){
+		else{
+		//else if (time <= 2){
 		//not the first line
 			printTableHead(write, time);
 			
@@ -361,6 +407,7 @@ int main(int argc, char** argv){
 			//put the messages into an array
 			int temp;
 			index = 0;
+			g->E = 0;
 			for(int i = 0; i < sizeof(buff); i++){
 				if(0 == buff[i]){
 					//end of the line
@@ -439,6 +486,7 @@ int main(int argc, char** argv){
 			index = 0;
 			memset(number, 0, SIZE);
 			g->edge = (struct Edge *)malloc(g->E * sizeof(struct Edge));
+			printf("%s\n", messages);
 			for (int n = 0; n < sizeof(messages); n++){
 				if(0 == messages[n]){
 					n = sizeof(messages);	
