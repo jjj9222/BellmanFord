@@ -44,7 +44,6 @@ void bellmanford(struct Graph *g, int source, char* populate, FILE* file, char* 
 	char formattemp[test];
 	char temp[5];
 	int line[totalV];
-	//printf("%s\n", populate);
 	for(int t = 0; t < (g->V)-1; t++){
 		line[t] = 1414;	
 	}
@@ -65,7 +64,6 @@ void bellmanford(struct Graph *g, int source, char* populate, FILE* file, char* 
 			tempVar = e+1;
 			while((47 < populate[tempVar]) && (58 > populate[tempVar])){
 				//found index number
-				//printf("Found index number after ;\n");
 				temp[local] = populate[tempVar];
 				tempVar += 1;
 				local += 1;
@@ -79,13 +77,11 @@ void bellmanford(struct Graph *g, int source, char* populate, FILE* file, char* 
 			tempVar = e+1;
 			while((47 < populate[tempVar]) && (58 > populate[tempVar])){
 				//found index number
-				//printf("Found index number after ,\n");
 				temp[local] = populate[tempVar];
 				tempVar += 1;
 				local += 1;
 			}
 			num = atoi(temp);
-			//printf("Putting num into the distance array\n");
 			d[index] = num;
 		}
 		
@@ -93,7 +89,6 @@ void bellmanford(struct Graph *g, int source, char* populate, FILE* file, char* 
 	fprintf(file, "\n");
 	//set the orgin to zero
 	d[0] = 0;
-	//printf("%d\n", totalE);
 	memset(format1, 0, test);
 	for(i = 1; i <= totalV-1; i++){
 		for(j = 0; j < totalE; j++){
@@ -101,7 +96,6 @@ void bellmanford(struct Graph *g, int source, char* populate, FILE* file, char* 
 			u = g->edge[j].start;
 			v = g->edge[j].end;
 			w = g->edge[j].weight;
-			
 			//formatting array below
 			if(1 == i){
 				format1[forvar] = 's';
@@ -136,13 +130,11 @@ void bellmanford(struct Graph *g, int source, char* populate, FILE* file, char* 
 			}
 			if (d[v] > d[u] + w){
 				d[v] = d[u] + w;
-				printf("%d\n", u);
 				p[v] = u;
 			}
 			
 		}
 	}
-	//printf("%s\n", format1);
 	//need to travel through the format array to print the correct values line by line
 	for(int row = 1; row < totalV; row++){
 		memset(temp, 0, 5);
@@ -166,7 +158,6 @@ void bellmanford(struct Graph *g, int source, char* populate, FILE* file, char* 
 					local += 1;
 					holder2 += 1;
 				}
-				//printf("%d compare to %d\n", atoi(temp), row);
 				if(atoi(temp) == row || atoi(temp) == 0){
 					//on that row ready to put into a line array
 					//need to get the index to line
@@ -180,7 +171,6 @@ void bellmanford(struct Graph *g, int source, char* populate, FILE* file, char* 
 						holder2 += 1;
 					}
 					int weight = atoi(temp);
-					//printf("%d\n", weight);
 					memset(temp,0,5);
 					local = 0;
 					holder -= 1;
@@ -200,12 +190,9 @@ void bellmanford(struct Graph *g, int source, char* populate, FILE* file, char* 
 					}
 					else if(0 != isA){
 						line[atoi(temp)] = Avalue + weight;
-						//printf("%d\n", line[atoi(temp)]);
 					}
-					//printf("%d ", line[atoi(temp)]);
 				}
-				//printf("\n");
-				//printf("%c\n", format1[val+1]);
+
 			}
 			
 		}
@@ -273,7 +260,6 @@ int main(int argc, char** argv){
 			bellman[node] = 'A';
 			bellman[node+1] = '0';
 			vert += 2;
-			printf("%s\n", bellman);
 			//we get the first line
 			for(int i = 0; i < sizeof(buff); i++){
 				//since the top string is seperated by comma we can seperate by comma
@@ -350,8 +336,6 @@ int main(int argc, char** argv){
 				}
 			}
 			initial[index2-1] = '*';
-			printf("%s\n", initial);
-			printf("%s\n", distance);
 			fprintf(write, "\n");
 			index = 0;
 			int line = 0;
@@ -409,7 +393,6 @@ int main(int argc, char** argv){
 		}
 		//done printing first table
 		else{
-		//else if (time <= 2){
 		//not the first line
 			printTableHead(write, time);
 			
@@ -496,7 +479,6 @@ int main(int argc, char** argv){
 			index = 0;
 			memset(number, 0, SIZE);
 			g->edge = (struct Edge *)malloc(g->E * sizeof(struct Edge));
-			printf("%s\n", messages);
 			for (int n = 0; n < sizeof(messages); n++){
 				if(0 == messages[n]){
 					n = sizeof(messages);	
@@ -560,10 +542,6 @@ int main(int argc, char** argv){
 			}
 			//edges are in the graph
 			bellmanford(g, 'A', initial, write, letters);
-			//printf("%s\n", bellman);
-			//printf("%s\n", letters);
-			//printf("%s\n", nletters);
-			
 		}
 	time += 1;	
 		
@@ -576,5 +554,3 @@ int main(int argc, char** argv){
 	fclose(fp);
 	fclose(write);
 	}
-			
-
