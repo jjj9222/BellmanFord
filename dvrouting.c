@@ -389,13 +389,23 @@ int main(int argc, char** argv){
 					fprintf(write, "\t\t%c\t\t%c\n", letters[i], letters[i]);	
 				}
 			}
-			fprintf(file, "Messages Sent:\n");
-			int = tempvariable = 0;
-			for(int w = 0; w < totalV-1; w++){
-				fprintf(file, "{A,%c,%d};", letters[value], distance[value+1]);
+			fprintf(write, "Messages Sent:\n");
+			int tempvariable = 0;
+			for(int w = 0; w < sizeof(letters); w++){
+				if(0 == letters[w]){
+					w = sizeof(letters);	
+				}
+				else{
+					fprintf(write, "{A,%c,", letters[w]);
+					while((47 < distance[tempvariable]) && (58 > distance[tempvariable])){
+						fprintf(write, "%c", distance[tempvariable]);
+						tempvariable += 1;	
+					}
+					tempvariable += 1;
+					fprintf(write, "};");
+				}
 			}
-	}
-	fprintf(file, "\n");
+			fprintf(write, "\n");
 		}
 		//done printing first table
 		else{
